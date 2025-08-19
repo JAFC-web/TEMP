@@ -3,244 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicios de Regresión Lineal</title>
+    <title>Ejercicios de Regresión Lineal - ITTID II</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
         }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
+        
         .header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             padding: 30px;
             text-align: center;
         }
+        
         .header h1 {
-            margin: 0;
             font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            font-weight: 700;
         }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .exercises {
+            padding: 30px;
+        }
+        
         .exercise {
-            margin: 30px;
-            padding: 25px;
-            border: 2px solid #e3f2fd;
-            border-radius: 12px;
-            background: #fafafa;
+            margin-bottom: 40px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
-        .exercise h2 {
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-top: 0;
+        
+        .exercise:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        
+        .exercise-header {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .exercise-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .toggle-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            background: #3730a3;
+        }
+        
+        .exercise-content {
+            display: none;
+            padding: 30px;
+            background: white;
+        }
+        
+        .exercise-content.active {
+            display: block;
+        }
+        
+        .data-section {
+            margin-bottom: 30px;
+        }
+        
         .data-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .data-table th, .data-table td {
+        
+        .data-table th {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .data-table td {
             padding: 12px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e5e7eb;
         }
-        .data-table th {
-            background: #3498db;
-            color: white;
-            font-weight: bold;
+        
+        .data-table tbody tr:hover {
+            background: #f8fafc;
         }
-        .data-table tr:nth-child(even) {
-            background: #f8f9fa;
+        
+        .results-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0e7ff);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #4f46e5;
         }
+        
         .chart-container {
-            position: relative;
-            height: 400px;
-            margin: 30px 0;
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
             background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .results {
-            background: #e8f5e8;
+        
+        .prediction-input {
+            background: white;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
             margin: 20px 0;
-            border-left: 5px solid #27ae60;
         }
-        .results h3 {
-            color: #27ae60;
-            margin-top: 0;
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
         }
+        
+        .input-group label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 120px;
+        }
+        
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        
+        .predict-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .predict-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .result-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #4f46e5;
+            margin: 10px 0;
+        }
+        
         .formula {
-            background: #f0f8ff;
+            background: #f8fafc;
             padding: 15px;
             border-radius: 8px;
+            font-family: monospace;
+            font-size: 16px;
             margin: 15px 0;
-            border-left: 4px solid #3498db;
-            font-family: 'Courier New', monospace;
+            border-left: 4px solid #4f46e5;
         }
-        .warning {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #f39c12;
-            color: #856404;
-        }
-        .prediction {
-            background: #d4edda;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 2px solid #c3e6cb;
-        }
-        .prediction h4 {
-            color: #155724;
-            margin-top: 0;
-        }
+        
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin: 20px 0;
         }
+        
         .stat-card {
             background: white;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-left: 4px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+        
         .stat-label {
-            color: #7f8c8d;
             font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #374151;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Ejercicios de Regresión Lineal</h1>
-            <p>Análisis Estadístico Completo con Visualizaciones</p>
+            <h1>Ejercicios de Regresión Lineal</h1>
+            <p>ITTID II - Análisis de Datos y Predicciones</p>
         </div>
-
-        <!-- Ejercicio 1 -->
-        <div class="exercise">
-            <h2>🌐 Ejercicio 1: Tiempo de Respuesta del Servidor</h2>
-            <p><strong>Problema:</strong> Analizar cómo influye la cantidad de usuarios simultáneos en el tiempo promedio de respuesta del servidor web.</p>
-            
-            <table class="data-table" id="table1">
-                <thead>
-                    <tr>
-                        <th>Usuarios conectados (X)</th>
-                        <th>Tiempo de respuesta (ms) (Y)</th>
-                    </tr>
-                </thead>
-                <tbody id="data1"></tbody>
-            </table>
-
-            <div class="chart-container">
-                <canvas id="chart1"></canvas>
-            </div>
-
-            <div class="stats" id="stats1"></div>
-
-            <div class="results">
-                <h3>📈 Ecuación de Regresión</h3>
-                <div class="formula" id="equation1"></div>
-                
-                <div class="prediction">
-                    <h4>🎯 Predicción para X = 450 usuarios</h4>
-                    <p id="prediction1"></p>
+        
+        <div class="exercises">
+            <!-- Ejercicio 1: Usuarios vs Tiempo de Respuesta -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise('ex1')">
+                    <div class="exercise-title">Ejercicio 1: Usuarios Simultáneos vs Tiempo de Respuesta</div>
+                    <button class="toggle-btn">Ver/Ocultar</button>
+                </div>
+                <div class="exercise-content" id="ex1">
+                    <div class="data-section">
+                        <h3>Datos del Servidor Web</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuarios Conectados (X)</th>
+                                    <th>Tiempo de Respuesta (ms) (Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data1"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="prediction-input">
+                        <div class="input-group">
+                            <label>Predecir para X =</label>
+                            <input type="number" id="input1" value="450" min="0">
+                            <button class="predict-btn" onclick="predict(1)">Calcular Predicción</button>
+                        </div>
+                    </div>
+                    
+                    <div class="results-section" id="results1"></div>
+                    <div class="chart-container">
+                        <canvas id="chart1"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Ejercicio 2 -->
-        <div class="exercise">
-            <h2>⚡ Ejercicio 2: Tiempo de Ejecución vs Complejidad</h2>
-            <p><strong>Problema:</strong> Estudiar cómo la complejidad del código impacta el tiempo de ejecución de un programa.</p>
             
-            <table class="data-table" id="table2">
-                <thead>
-                    <tr>
-                        <th>Complejidad (X)</th>
-                        <th>Tiempo de ejecución (s) (Y)</th>
-                    </tr>
-                </thead>
-                <tbody id="data2"></tbody>
-            </table>
-
-            <div class="chart-container">
-                <canvas id="chart2"></canvas>
-            </div>
-
-            <div class="stats" id="stats2"></div>
-
-            <div class="results">
-                <h3>📈 Ecuación de Regresión</h3>
-                <div class="formula" id="equation2"></div>
-                
-                <div class="prediction">
-                    <h4>🎯 Predicción para X = 30</h4>
-                    <p id="prediction2"></p>
-                    <h4>📊 Intervalo de Predicción del 95%</h4>
-                    <p id="interval2"></p>
+            <!-- Ejercicio 2: Complejidad vs Tiempo de Ejecución -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise('ex2')">
+                    <div class="exercise-title">Ejercicio 2: Complejidad de Código vs Tiempo de Ejecución</div>
+                    <button class="toggle-btn">Ver/Ocultar</button>
+                </div>
+                <div class="exercise-content" id="ex2">
+                    <div class="data-section">
+                        <h3>Datos de Rendimiento del Programa</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Complejidad (X)</th>
+                                    <th>Tiempo de Ejecución (s) (Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data2"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="prediction-input">
+                        <div class="input-group">
+                            <label>Predecir para X =</label>
+                            <input type="number" id="input2" value="30" min="0">
+                            <button class="predict-btn" onclick="predict(2)">Calcular Predicción</button>
+                        </div>
+                    </div>
+                    
+                    <div class="results-section" id="results2"></div>
+                    <div class="chart-container">
+                        <canvas id="chart2"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Ejercicio 3 -->
-        <div class="exercise">
-            <h2>💡 Ejercicio 3: Consumo Eléctrico vs Uso de CPU</h2>
-            <p><strong>Problema:</strong> Modelar el consumo eléctrico (kWh) en función del uso promedio de CPU (%).</p>
             
-            <table class="data-table" id="table3">
-                <thead>
-                    <tr>
-                        <th>Uso de CPU (%) (X)</th>
-                        <th>Consumo eléctrico (kWh) (Y)</th>
-                    </tr>
-                </thead>
-                <tbody id="data3"></tbody>
-            </table>
-
-            <div class="chart-container">
-                <canvas id="chart3"></canvas>
-            </div>
-
-            <div class="stats" id="stats3"></div>
-
-            <div class="results">
-                <h3>📈 Ecuación de Regresión</h3>
-                <div class="formula" id="equation3"></div>
-                
-                <div class="warning">
-                    <h4>⚠️ Validez del modelo para X > 90%</h4>
-                    <p id="validity3"></p>
+            <!-- Ejercicio 3: CPU vs Consumo Eléctrico -->
+            <div class="exercise">
+                <div class="exercise-header" onclick="toggleExercise('ex3')">
+                    <div class="exercise-title">Ejercicio 3: Uso de CPU vs Consumo Eléctrico</div>
+                    <button class="toggle-btn">Ver/Ocultar</button>
+                </div>
+                <div class="exercise-content" id="ex3">
+                    <div class="data-section">
+                        <h3>Datos de Consumo Energético</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Uso de CPU (%) (X)</th>
+                                    <th>Consumo Eléctrico (kWh) (Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data3"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="prediction-input">
+                        <div class="input-group">
+                            <label>Predecir para X =</label>
+                            <input type="number" id="input3" value="95" min="0" max="100">
+                            <button class="predict-btn" onclick="predict(3)">Calcular Predicción</button>
+                        </div>
+                    </div>
+                    
+                    <div class="results-section" id="results3"></div>
+                    <div class="chart-container">
+                        <canvas id="chart3"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -248,233 +363,338 @@
 
     <script>
         // Datos de los ejercicios
-        const data1 = [
-            [40, 108], [70, 145], [100, 182], [130, 220], [160, 258], [190, 295],
-            [220, 332], [250, 370], [280, 408], [310, 445], [340, 482], [370, 520], [400, 558]
-        ];
+        const exercises = {
+            1: {
+                title: "Usuarios vs Tiempo de Respuesta",
+                data: [
+                    [40, 108], [70, 145], [100, 182], [130, 220], [160, 258],
+                    [190, 295], [220, 332], [250, 370], [280, 408], [310, 445],
+                    [340, 482], [370, 520], [400, 558]
+                ],
+                xLabel: "Usuarios Conectados",
+                yLabel: "Tiempo de Respuesta (ms)",
+                question: "Predice el tiempo de respuesta para X = 450 usuarios"
+            },
+            2: {
+                title: "Complejidad vs Tiempo de Ejecución",
+                data: [
+                    [4, 0.675], [7, 1.05], [10, 1.425], [13, 1.8], [16, 2.175],
+                    [19, 2.55], [22, 2.925], [25, 3.3], [28, 3.675], [31, 4.05],
+                    [34, 4.425], [37, 4.8]
+                ],
+                xLabel: "Complejidad",
+                yLabel: "Tiempo de Ejecución (s)",
+                question: "Predice Y para X = 30 y construye un intervalo de predicción del 95%"
+            },
+            3: {
+                title: "CPU vs Consumo Eléctrico",
+                data: [
+                    [5, 110.9], [12, 123.6], [19, 136.3], [26, 149.0], [33, 161.7],
+                    [40, 174.4], [47, 187.1], [54, 199.8], [61, 212.4], [68, 225.1],
+                    [75, 237.8], [82, 250.5], [89, 263.2]
+                ],
+                xLabel: "Uso de CPU (%)",
+                yLabel: "Consumo Eléctrico (kWh)",
+                question: "Discute la validez de usar el modelo para X > 90%"
+            }
+        };
 
-        const data2 = [
-            [4, 0.675], [7, 1.05], [10, 1.425], [13, 1.8], [16, 2.175], [19, 2.55],
-            [22, 2.925], [25, 3.3], [28, 3.675], [31, 4.05], [34, 4.425], [37, 4.8]
-        ];
-
-        const data3 = [
-            [5, 110.9], [12, 123.6], [19, 136.3], [26, 149.0], [33, 161.7], [40, 174.4],
-            [47, 187.1], [54, 199.8], [61, 212.4], [68, 225.1], [75, 237.8], [82, 250.5], [89, 263.2]
-        ];
+        let charts = {};
 
         // Función para calcular regresión lineal
         function linearRegression(data) {
             const n = data.length;
             const sumX = data.reduce((sum, point) => sum + point[0], 0);
             const sumY = data.reduce((sum, point) => sum + point[1], 0);
-            const sumXY = data.reduce((sum, point) => sum + point[0] * point[1], 0);
-            const sumX2 = data.reduce((sum, point) => sum + point[0] * point[0], 0);
-            const sumY2 = data.reduce((sum, point) => sum + point[1] * point[1], 0);
+            const sumXY = data.reduce((sum, point) => sum + (point[0] * point[1]), 0);
+            const sumX2 = data.reduce((sum, point) => sum + (point[0] * point[0]), 0);
+            const sumY2 = data.reduce((sum, point) => sum + (point[1] * point[1]), 0);
+
+            const meanX = sumX / n;
+            const meanY = sumY / n;
 
             const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-            const intercept = (sumY - slope * sumX) / n;
+            const intercept = meanY - slope * meanX;
 
             // Coeficiente de correlación
             const r = (n * sumXY - sumX * sumY) / 
                      Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
 
-            // Error estándar de la estimación
+            // Error estándar
             const yPred = data.map(point => slope * point[0] + intercept);
-            const sse = data.reduce((sum, point, i) => sum + Math.pow(point[1] - yPred[i], 2), 0);
-            const se = Math.sqrt(sse / (n - 2));
+            const ssr = data.reduce((sum, point, i) => sum + Math.pow(point[1] - yPred[i], 2), 0);
+            const se = Math.sqrt(ssr / (n - 2));
 
-            // Error estándar de la predicción
-            const meanX = sumX / n;
-            const sxx = sumX2 - sumX * sumX / n;
-
-            return { slope, intercept, r, se, meanX, sxx, n };
+            return { slope, intercept, r, se, n, meanX, sumX2 };
         }
 
-        // Función para crear tabla
-        function createTable(data, tableId) {
-            const tbody = document.getElementById(tableId).querySelector('tbody');
+        // Función para calcular intervalo de predicción
+        function predictionInterval(x, regression, confidence = 0.95) {
+            const { slope, intercept, se, n, meanX, sumX2 } = regression;
+            const predicted = slope * x + intercept;
+            
+            // Valor t para 95% de confianza
+            const tValue = 2.179; // aproximado para n-2 grados de libertad
+            
+            const sePred = se * Math.sqrt(1 + 1/n + Math.pow(x - meanX, 2) / (sumX2 - n * meanX * meanX));
+            const margin = tValue * sePred;
+            
+            return {
+                predicted,
+                lower: predicted - margin,
+                upper: predicted + margin,
+                margin
+            };
+        }
+
+        // Función para poblar tablas
+        function populateTable(exerciseNum) {
+            const data = exercises[exerciseNum].data;
+            const tbody = document.getElementById(`data${exerciseNum}`);
             tbody.innerHTML = '';
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td>`;
-                tbody.appendChild(tr);
+            
+            data.forEach(point => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = point[0];
+                row.insertCell(1).textContent = point[1];
             });
         }
 
-        // Función para crear estadísticas
-        function createStats(regression, statsId) {
-            const statsContainer = document.getElementById(statsId);
-            const r2 = Math.pow(regression.r, 2);
-            
-            statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${regression.slope.toFixed(4)}</div>
-                    <div class="stat-label">Pendiente (b₁)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${regression.intercept.toFixed(4)}</div>
-                    <div class="stat-label">Intercepto (b₀)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${regression.r.toFixed(4)}</div>
-                    <div class="stat-label">Correlación (r)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${r2.toFixed(4)}</div>
-                    <div class="stat-label">R² (Determinación)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${regression.se.toFixed(4)}</div>
-                    <div class="stat-label">Error Estándar</div>
-                </div>
-            `;
-        }
+        // Función para crear gráficos
+        function createChart(exerciseNum) {
+            const canvas = document.getElementById(`chart${exerciseNum}`);
+            const ctx = canvas.getContext('2d');
+            const data = exercises[exerciseNum].data;
+            const exercise = exercises[exerciseNum];
 
-        // Función para crear gráfico
-        function createChart(data, regression, chartId, title, xLabel, yLabel) {
-            const ctx = document.getElementById(chartId).getContext('2d');
-            
-            // Crear línea de regresión
-            const minX = Math.min(...data.map(d => d[0]));
-            const maxX = Math.max(...data.map(d => d[0]));
-            const regressionLine = [];
-            for (let x = minX; x <= maxX; x += (maxX - minX) / 100) {
-                regressionLine.push({
-                    x: x,
-                    y: regression.slope * x + regression.intercept
-                });
+            if (charts[exerciseNum]) {
+                charts[exerciseNum].destroy();
             }
 
-            new Chart(ctx, {
+            charts[exerciseNum] = new Chart(ctx, {
                 type: 'scatter',
                 data: {
                     datasets: [{
-                        label: 'Datos observados',
-                        data: data.map(d => ({x: d[0], y: d[1]})),
-                        backgroundColor: 'rgba(52, 152, 219, 0.6)',
-                        borderColor: 'rgba(52, 152, 219, 1)',
+                        label: 'Datos Observados',
+                        data: data.map(point => ({x: point[0], y: point[1]})),
+                        backgroundColor: '#4f46e5',
+                        borderColor: '#4f46e5',
                         pointRadius: 6,
                         pointHoverRadius: 8
-                    }, {
-                        label: 'Línea de regresión',
-                        data: regressionLine,
-                        type: 'line',
-                        borderColor: 'rgba(231, 76, 60, 1)',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        fill: false,
-                        pointRadius: 0,
-                        borderWidth: 3
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'point'
+                    },
                     plugins: {
                         title: {
                             display: true,
-                            text: title,
+                            text: exercise.title,
                             font: { size: 16, weight: 'bold' }
                         },
                         legend: {
-                            position: 'top'
+                            display: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `(${context.parsed.x}, ${context.parsed.y})`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
+                            display: true,
                             title: {
                                 display: true,
-                                text: xLabel,
-                                font: { weight: 'bold' }
+                                text: exercise.xLabel,
+                                font: { size: 14, weight: 'bold' }
                             },
-                            grid: { alpha: 0.3 }
+                            grid: {
+                                display: true,
+                                color: '#e5e7eb',
+                                lineWidth: 1
+                            },
+                            ticks: {
+                                stepSize: exerciseNum === 1 ? 50 : exerciseNum === 2 ? 5 : 10,
+                                color: '#374151',
+                                font: { size: 12 }
+                            }
                         },
                         y: {
+                            display: true,
                             title: {
                                 display: true,
-                                text: yLabel,
-                                font: { weight: 'bold' }
+                                text: exercise.yLabel,
+                                font: { size: 14, weight: 'bold' }
                             },
-                            grid: { alpha: 0.3 }
+                            grid: {
+                                display: true,
+                                color: '#e5e7eb',
+                                lineWidth: 1
+                            },
+                            ticks: {
+                                stepSize: exerciseNum === 1 ? 50 : exerciseNum === 2 ? 0.5 : 20,
+                                color: '#374151',
+                                font: { size: 12 }
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Función para calcular intervalo de predicción
-        function predictionInterval(x, regression, confidence = 0.95) {
-            const alpha = 1 - confidence;
-            const tValue = 2.228; // t para 95% con df=10 (aproximado)
+        // Función para predecir
+        function predict(exerciseNum) {
+            const input = document.getElementById(`input${exerciseNum}`);
+            const x = parseFloat(input.value);
+            const data = exercises[exerciseNum].data;
+            const regression = linearRegression(data);
+            const prediction = predictionInterval(x, regression);
             
-            const sePred = regression.se * Math.sqrt(1 + 1/regression.n + 
-                         Math.pow(x - regression.meanX, 2) / regression.sxx);
+            const resultsDiv = document.getElementById(`results${exerciseNum}`);
             
-            const prediction = regression.slope * x + regression.intercept;
-            const margin = tValue * sePred;
+            let html = `
+                <h3>Resultados del Análisis</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Pendiente (m)</div>
+                        <div class="stat-value">${regression.slope.toFixed(4)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Intercepto (b)</div>
+                        <div class="stat-value">${regression.intercept.toFixed(4)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Correlación (r)</div>
+                        <div class="stat-value">${regression.r.toFixed(4)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">R² (%)</div>
+                        <div class="stat-value">${(regression.r * regression.r * 100).toFixed(2)}%</div>
+                    </div>
+                </div>
+                
+                <div class="formula">
+                    <strong>Ecuación de Regresión:</strong><br>
+                    Y = ${regression.slope.toFixed(4)}X + ${regression.intercept.toFixed(4)}
+                </div>
+                
+                <div class="result-value">
+                    <strong>Predicción para X = ${x}:</strong><br>
+                    Y = ${prediction.predicted.toFixed(4)}
+                </div>
+            `;
             
-            return {
-                prediction: prediction,
-                lower: prediction - margin,
-                upper: prediction + margin,
-                margin: margin
-            };
+            if (exerciseNum === 2) {
+                html += `
+                    <div class="result-value">
+                        <strong>Intervalo de Predicción (95%):</strong><br>
+                        [${prediction.lower.toFixed(4)}, ${prediction.upper.toFixed(4)}]
+                    </div>
+                `;
+            }
+            
+            if (exerciseNum === 3 && x > 90) {
+                html += `
+                    <div class="result-value" style="color: #dc2626;">
+                        <strong>⚠️ Advertencia:</strong><br>
+                        La predicción para X > 90% puede no ser válida porque:
+                        <ul style="margin-top: 10px; text-align: left;">
+                            <li>Extrapolación fuera del rango de datos observados</li>
+                            <li>El CPU no puede exceder 100% en condiciones normales</li>
+                            <li>La relación lineal puede no mantenerse en valores extremos</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = html;
+            
+            // Actualizar gráfico con línea de regresión
+            updateChartWithRegression(exerciseNum, regression, x, prediction.predicted);
         }
 
-        // Procesar ejercicio 1
-        const reg1 = linearRegression(data1);
-        createTable(data1, 'data1');
-        createStats(reg1, 'stats1');
-        createChart(data1, reg1, 'chart1', 'Tiempo de Respuesta vs Usuarios Conectados', 
-                   'Usuarios Conectados', 'Tiempo de Respuesta (ms)');
-        
-        document.getElementById('equation1').innerHTML = 
-            `Y = ${reg1.intercept.toFixed(4)} + ${reg1.slope.toFixed(4)}X`;
-        
-        const pred1 = reg1.slope * 450 + reg1.intercept;
-        document.getElementById('prediction1').innerHTML = 
-            `<strong>Tiempo de respuesta estimado: ${pred1.toFixed(2)} ms</strong><br>
-             Para 450 usuarios simultáneos, el servidor tardará aproximadamente ${pred1.toFixed(0)} milisegundos en responder.`;
+        // Función para actualizar gráfico con regresión
+        function updateChartWithRegression(exerciseNum, regression, predX, predY) {
+            const chart = charts[exerciseNum];
+            const data = exercises[exerciseNum].data;
+            
+            const minX = Math.min(...data.map(p => p[0]));
+            const maxX = Math.max(...data.map(p => p[0]));
+            const extendedMaxX = Math.max(maxX, predX);
+            
+            const regressionLine = [];
+            for (let x = minX; x <= extendedMaxX; x += (extendedMaxX - minX) / 100) {
+                regressionLine.push({
+                    x: x,
+                    y: regression.slope * x + regression.intercept
+                });
+            }
+            
+            // Actualizar datos del gráfico
+            chart.data.datasets = [
+                {
+                    label: 'Datos Observados',
+                    data: data.map(point => ({x: point[0], y: point[1]})),
+                    backgroundColor: '#4f46e5',
+                    borderColor: '#4f46e5',
+                    pointRadius: 6,
+                    type: 'scatter'
+                },
+                {
+                    label: 'Línea de Regresión',
+                    data: regressionLine,
+                    backgroundColor: 'transparent',
+                    borderColor: '#10b981',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    type: 'line'
+                },
+                {
+                    label: `Predicción (${predX}, ${predY.toFixed(2)})`,
+                    data: [{x: predX, y: predY}],
+                    backgroundColor: '#dc2626',
+                    borderColor: '#dc2626',
+                    pointRadius: 8,
+                    type: 'scatter'
+                }
+            ];
+            
+            chart.update();
+        }
 
-        // Procesar ejercicio 2
-        const reg2 = linearRegression(data2);
-        createTable(data2, 'data2');
-        createStats(reg2, 'stats2');
-        createChart(data2, reg2, 'chart2', 'Tiempo de Ejecución vs Complejidad del Código', 
-                   'Complejidad', 'Tiempo de Ejecución (s)');
-        
-        document.getElementById('equation2').innerHTML = 
-            `Y = ${reg2.intercept.toFixed(4)} + ${reg2.slope.toFixed(4)}X`;
-        
-        const interval2 = predictionInterval(30, reg2);
-        document.getElementById('prediction2').innerHTML = 
-            `<strong>Tiempo de ejecución estimado: ${interval2.prediction.toFixed(4)} segundos</strong>`;
-        
-        document.getElementById('interval2').innerHTML = 
-            `<strong>Intervalo de predicción del 95%:</strong><br>
-             Límite inferior: ${interval2.lower.toFixed(4)} s<br>
-             Límite superior: ${interval2.upper.toFixed(4)} s<br>
-             <em>Con un 95% de confianza, el tiempo de ejecución para una complejidad de 30 estará entre ${interval2.lower.toFixed(3)} y ${interval2.upper.toFixed(3)} segundos.</em>`;
+        // Función para toggle de ejercicios
+        function toggleExercise(exerciseId) {
+            const content = document.getElementById(exerciseId);
+            content.classList.toggle('active');
+            
+            // Si se está abriendo el ejercicio, crear el gráfico
+            if (content.classList.contains('active')) {
+                const exerciseNum = parseInt(exerciseId.replace('ex', ''));
+                setTimeout(() => {
+                    createChart(exerciseNum);
+                }, 100);
+            }
+        }
 
-        // Procesar ejercicio 3
-        const reg3 = linearRegression(data3);
-        createTable(data3, 'data3');
-        createStats(reg3, 'stats3');
-        createChart(data3, reg3, 'chart3', 'Consumo Eléctrico vs Uso de CPU', 
-                   'Uso de CPU (%)', 'Consumo Eléctrico (kWh)');
-        
-        document.getElementById('equation3').innerHTML = 
-            `Y = ${reg3.intercept.toFixed(4)} + ${reg3.slope.toFixed(4)}X`;
-        
-        document.getElementById('validity3').innerHTML = 
-            `<strong>No se recomienda usar este modelo para valores de CPU > 90%</strong><br><br>
-             <strong>Razones:</strong><br>
-             • <strong>Extrapolación:</strong> Los datos observados van del 5% al 89% de CPU. Predecir para > 90% implica extrapolación fuera del rango de datos.<br>
-             • <strong>Limitaciones físicas:</strong> El consumo eléctrico no puede crecer linealmente indefinidamente. A altos niveles de CPU, pueden aparecer efectos no lineales.<br>
-             • <strong>Comportamiento del sistema:</strong> Cerca del 100% de CPU, el sistema puede cambiar su comportamiento (throttling, protecciones térmicas).<br>
-             • <strong>R² = ${(reg3.r * reg3.r).toFixed(4)}:</strong> Aunque la correlación es muy alta, esto no garantiza que la relación lineal se mantenga fuera del rango observado.<br><br>
-             <strong>Recomendación:</strong> Recopilar más datos en el rango 90-100% de CPU antes de hacer predicciones en esa zona.`;
+        // Inicializar la aplicación
+        function init() {
+            // Poblar todas las tablas
+            for (let i = 1; i <= 3; i++) {
+                populateTable(i);
+            }
+            
+            // Abrir el primer ejercicio por defecto
+            toggleExercise('ex1');
+        }
 
+        // Inicializar cuando la página esté lista
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
